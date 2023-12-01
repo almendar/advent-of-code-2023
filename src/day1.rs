@@ -5,93 +5,71 @@ use std::{
     path::Path,
 };
 
-fn find_first_last(line: &str) -> (i32, i32) {
-    let mut first = -1;
-    let mut last = -1;
+fn find_with_prefixes_first_last(line: String) -> i32 {
+    let prefixes: HashMap<&str, i32> = HashMap::from([
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+    ]);
+    let left_right: (Option<i32>, Option<i32>) =
+        line.char_indices()
+            .fold((Option::None, Option::None), |el, item| {
+                let mut what_we_found: Option<i32> = None;
 
-    for c in line.chars() {
-        if c.is_numeric() {
-            let digit = c.to_digit(10).unwrap() as i32;
-            if first == -1 {
-                first = digit;
-            }
-            last = digit;
-        }
-    }
-    (first, last)
-}
+                if item.1.is_digit(10) {
+                    what_we_found = item.1.to_digit(10).map(|x| x as i32);
+                };
 
-fn find_with_prefixes_first_last(line: &str, prefixes: &HashMap<String, i32>) -> (i32, i32) {
-    let mut first = -1;
-    let mut last = -1;
-
-    let mut chars = line.char_indices().peekable();
-
-    while let Some((start, c)) = chars.peek().copied() {
-        if c.is_numeric() {
-            let digit = c.to_digit(10).unwrap() as i32;
-            if first == -1 {
-                first = digit;
-            }
-            last = digit;
-            chars.next();
-            continue;
-        }
-
-        for (prefix, prefix_value) in prefixes.iter() {
-            if line[start..].starts_with(prefix) {
-                if first == -1 {
-                    first = *prefix_value;
+                for (k, v) in &prefixes {
+                    if line[item.0..].starts_with(k) {
+                        what_we_found = Some(*v as i32);
+                    }
                 }
-                last = *prefix_value;
-                break;
-            }
-        }
-        chars.next();
-    }
-    if last == -1 {
-        last = first;
-    }
+                if let Some(number) = what_we_found {
+                    match el {
+                        (Some(fst), _) => (Some(fst), Some(number)),
+                        (None, None) => (Some(number), Some(number)),
+                        (None, Some(_)) => panic!("This is impossible!"),
+                    }
+                } else {
+                    el
+                }
+            });
 
-    (first, last)
+    left_right.0.unwrap() * 10 + left_right.1.unwrap()
 }
 
-pub fn task1(input: &str) -> io::Result<i32> {
+fn find_first_last(line: String) -> u32 {
+    let digits: Vec<u32> = line.chars().filter_map(|x| x.to_digit(10)).collect();
+    *digits.first().unwrap() * 10 + *digits.last().unwrap()
+}
+
+pub fn task1(input: &str) -> io::Result<u32> {
     let path = Path::new(input);
     let file = File::open(path)?;
     let reader = BufReader::new(file);
-
-    let mut counter = 0;
-    for line in reader.lines() {
-        let (first, last) = find_first_last(&line?);
-        counter += first * 10 + last;
-    }
-
-    Ok(counter)
+    Ok(reader
+        .lines()
+        .filter_map(Result::ok)
+        .map(find_first_last)
+        .sum())
 }
 
 pub fn task2(input: &str) -> io::Result<i32> {
     let path = Path::new(input);
     let file = File::open(path)?;
     let reader = BufReader::new(file);
-
-    let mut prefixes: HashMap<String, i32> = HashMap::new();
-    prefixes.insert("one".to_owned(), 1);
-    prefixes.insert("two".to_owned(), 2);
-    prefixes.insert("three".to_owned(), 3);
-    prefixes.insert("four".to_owned(), 4);
-    prefixes.insert("five".to_owned(), 5);
-    prefixes.insert("six".to_owned(), 6);
-    prefixes.insert("seven".to_owned(), 7);
-    prefixes.insert("eight".to_owned(), 8);
-    prefixes.insert("nine".to_owned(), 9);
-
-    let mut counter = 0;
-    for line in reader.lines() {
-        let (first, last) = find_with_prefixes_first_last(&line?, &prefixes);
-        counter += first * 10 + last;
-    }
-    Ok(counter)
+    Ok(reader
+        .lines()
+        .filter_map(Result::ok)
+        .map(find_with_prefixes_first_last)
+        .sum())
 }
 
 #[cfg(test)]
