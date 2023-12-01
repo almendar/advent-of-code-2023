@@ -38,7 +38,6 @@ fn find_with_prefixes_first_last(line: &str, prefixes: &HashMap<String, i32>) ->
             continue;
         }
 
-
         for (prefix, prefix_value) in prefixes.iter() {
             if line[start..].starts_with(prefix) {
                 if first == -1 {
@@ -48,7 +47,7 @@ fn find_with_prefixes_first_last(line: &str, prefixes: &HashMap<String, i32>) ->
                 break;
             }
         }
-            chars.next();
+        chars.next();
     }
     if last == -1 {
         last = first;
@@ -57,7 +56,7 @@ fn find_with_prefixes_first_last(line: &str, prefixes: &HashMap<String, i32>) ->
     (first, last)
 }
 
-fn task1(input: &str) -> io::Result<i32> {
+pub fn task1(input: &str) -> io::Result<i32> {
     let path = Path::new(input);
     let file = File::open(path)?;
     let reader = BufReader::new(file);
@@ -71,7 +70,7 @@ fn task1(input: &str) -> io::Result<i32> {
     Ok(counter)
 }
 
-fn task2(input: &str) -> io::Result<i32> {
+pub fn task2(input: &str) -> io::Result<i32> {
     let path = Path::new(input);
     let file = File::open(path)?;
     let reader = BufReader::new(file);
@@ -95,18 +94,23 @@ fn task2(input: &str) -> io::Result<i32> {
     Ok(counter)
 }
 
-fn main() -> io::Result<()> {
-    let result1 = task1("input/day1_example.txt")?;
-    println!("Result for day1_example.txt: {}", result1);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let result2 = task1("input/day1_input.txt")?;
-    println!("Result for day1_input.txt: {}", result2);
+    #[test]
+    fn test_day1() {
+        let task1_example_result = task1("input/day1_example.txt").unwrap();
+        assert_eq!(task1_example_result, 142);
+        // println!("Result for day1_example.txt: {}", result1);
 
-    let result2 = task2("input/day1_example_t2.txt")?;
-    println!("Result for day1_example_t2.txt: {}", result2);
+        let task1_result = task1("input/day1_input.txt").unwrap();
+        assert_eq!(task1_result, 54990);
 
-    let result2 = task2("input/day1_input.txt")?;
-    println!("Result for task2 day1_input.txt: {}", result2); 
+        let task2_example_result = task2("input/day1_example_t2.txt").unwrap();
+        assert_eq!(task2_example_result, 281);
 
-    Ok(())
+        let task2_result = task2("input/day1_input.txt").unwrap();
+        assert_eq!(task2_result, 54473)
+    }
 }

@@ -3,12 +3,5 @@
 version = 3
 
 [[package]]
-name = "common"
+name = "advent_of_code_2023"
 version = "0.1.0"
-
-[[package]]
-name = "day1"
-version = "0.1.0"
-dependencies = [
- "common",
-]
