@@ -5,8 +5,8 @@ use std::{
     path::Path,
 };
 
-fn find_with_prefixes_first_last(line: String) -> i32 {
-    let prefixes: HashMap<&str, i32> = HashMap::from([
+fn find_with_prefixes_first_last(line: String) -> u32 {
+    let prefixes: HashMap<&str, u32> = HashMap::from([
         ("one", 1),
         ("two", 2),
         ("three", 3),
@@ -17,18 +17,18 @@ fn find_with_prefixes_first_last(line: String) -> i32 {
         ("eight", 8),
         ("nine", 9),
     ]);
-    let left_right: (Option<i32>, Option<i32>) =
+    let left_right: (Option<u32>, Option<u32>) =
         line.char_indices()
             .fold((Option::None, Option::None), |el, item| {
-                let mut what_we_found: Option<i32> = None;
+                let mut what_we_found: Option<u32> = None;
 
                 if item.1.is_digit(10) {
-                    what_we_found = item.1.to_digit(10).map(|x| x as i32);
+                    what_we_found = item.1.to_digit(10);
                 };
 
                 for (k, v) in &prefixes {
                     if line[item.0..].starts_with(k) {
-                        what_we_found = Some(*v as i32);
+                        what_we_found = Some(*v);
                     }
                 }
                 if let Some(number) = what_we_found {
@@ -50,26 +50,22 @@ fn find_first_last(line: String) -> u32 {
     *digits.first().unwrap() * 10 + *digits.last().unwrap()
 }
 
-pub fn task1(input: &str) -> io::Result<u32> {
+fn fold_on_each_line<F>(input: &str, folder: F) -> io::Result<u32>
+where
+    F: Fn(String) -> u32,
+{
     let path = Path::new(input);
     let file = File::open(path)?;
     let reader = BufReader::new(file);
-    Ok(reader
-        .lines()
-        .filter_map(Result::ok)
-        .map(find_first_last)
-        .sum())
+    Ok(reader.lines().filter_map(Result::ok).map(folder).sum())
 }
 
-pub fn task2(input: &str) -> io::Result<i32> {
-    let path = Path::new(input);
-    let file = File::open(path)?;
-    let reader = BufReader::new(file);
-    Ok(reader
-        .lines()
-        .filter_map(Result::ok)
-        .map(find_with_prefixes_first_last)
-        .sum())
+pub fn task1(input: &str) -> io::Result<u32> {
+    fold_on_each_line(input, find_first_last)
+}
+
+pub fn task2(input: &str) -> io::Result<u32> {
+    fold_on_each_line(input, find_with_prefixes_first_last)
 }
 
 #[cfg(test)]
