@@ -60,32 +60,19 @@ pub fn task1(games: Vec<Game>) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use std::{
-        fs::File,
-        io::{self, BufRead, BufReader},
-        path::Path,
-    };
-
-    fn fold_on_each_line<F>(input: &str, folder: F) -> io::Result<Vec<Game>>
-    where
-        F: Fn(String) -> Game,
-    {
-        let path = Path::new(input);
-        let file = File::open(path)?;
-        let reader = BufReader::new(file);
-        Ok(reader.lines().filter_map(Result::ok).map(folder).collect())
-    }
 
     use super::*;
+    use crate::common::fold_on_each_line1;
 
     #[test]
     fn test_day2() {
-        let example_input = fold_on_each_line("input/day2_example.txt", line_to_games).unwrap();
+        let example_input: Vec<Game> =
+            fold_on_each_line1("input/day2_example.txt", line_to_games).unwrap();
         let task1_example = task1(example_input);
         println!("Day2 task1 example = {}", task1_example);
         assert_eq!(8, task1_example);
 
-        let input = fold_on_each_line("input/day2_input.txt", line_to_games).unwrap();
+        let input = fold_on_each_line1("input/day2_input.txt", line_to_games).unwrap();
         let task1 = task1(input);
         println!("Day2 task1 input = {}", task1);
         assert_eq!(2541, task1);

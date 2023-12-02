@@ -1,9 +1,9 @@
 use std::{
     collections::HashMap,
-    fs::File,
-    io::{self, BufRead, BufReader},
-    path::Path,
+    io::{self},
 };
+
+use crate::common::fold_on_each_line1;
 
 fn find_with_prefixes_first_last(line: String) -> u32 {
     let prefixes: HashMap<&str, u32> = HashMap::from([
@@ -50,22 +50,12 @@ fn find_first_last(line: String) -> u32 {
     *digits.first().unwrap() * 10 + *digits.last().unwrap()
 }
 
-fn fold_on_each_line<F>(input: &str, folder: F) -> io::Result<u32>
-where
-    F: Fn(String) -> u32,
-{
-    let path = Path::new(input);
-    let file = File::open(path)?;
-    let reader = BufReader::new(file);
-    Ok(reader.lines().filter_map(Result::ok).map(folder).sum())
-}
-
 pub fn task1(input: &str) -> io::Result<u32> {
-    fold_on_each_line(input, find_first_last)
+    fold_on_each_line1(input, find_first_last).map(|x| x.into_iter().sum())
 }
 
 pub fn task2(input: &str) -> io::Result<u32> {
-    fold_on_each_line(input, find_with_prefixes_first_last)
+    fold_on_each_line1(input, find_with_prefixes_first_last).map(|x| x.into_iter().sum())
 }
 
 #[cfg(test)]
