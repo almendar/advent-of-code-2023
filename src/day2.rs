@@ -1,3 +1,5 @@
+use std::error::Error;
+
 #[derive(Debug)]
 pub struct Draw {
     r: u64,
@@ -50,11 +52,28 @@ pub fn line_to_games(line: String) -> Game {
     }
 }
 
-pub fn task1(games: Vec<Game>) -> u64 {
+pub fn task1(games: &Vec<Game>) -> u64 {
     games
         .into_iter()
         .filter(|g| g.is_possible(12, 13, 14))
         .map(|x| x.id)
+        .sum()
+}
+
+pub fn task2(games: &Vec<Game>) -> u64 {
+    games
+        .into_iter()
+        .map(|game| {
+            let mut min_r = 0;
+            let mut min_g = 0;
+            let mut min_b = 0;
+            for draw in &game.draws {
+                min_r = std::cmp::max(min_r, draw.r);
+                min_g = std::cmp::max(min_g, draw.g);
+                min_b = std::cmp::max(min_b, draw.b);
+            }
+            min_r * min_g * min_b
+        })
         .sum()
 }
 
@@ -68,13 +87,19 @@ mod tests {
     fn test_day2() {
         let example_input: Vec<Game> =
             fold_on_each_line1("input/day2_example.txt", line_to_games).unwrap();
-        let task1_example = task1(example_input);
+        let task1_example = task1(&example_input);
         println!("Day2 task1 example = {}", task1_example);
         assert_eq!(8, task1_example);
 
         let input = fold_on_each_line1("input/day2_input.txt", line_to_games).unwrap();
-        let task1 = task1(input);
+        let task1 = task1(&input);
         println!("Day2 task1 input = {}", task1);
         assert_eq!(2541, task1);
+
+        let task2_exmple = task2(&example_input);
+        println!("Day2 task2 example = {}", task2_exmple);
+
+        let task2 = task2(&input);
+        println!("Day2 task2 input = {}", task2);
     }
 }
