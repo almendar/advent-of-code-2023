@@ -20,11 +20,11 @@ fn find_with_prefixes_first_last(line: String) -> u32 {
     let left_right: (Option<u32>, Option<u32>) =
         line.char_indices()
             .fold((Option::None, Option::None), |el, item| {
-                let mut what_we_found: Option<u32> = None;
+                let mut what_we_found: Option<u32> = item.1.to_digit(10);
 
-                if item.1.is_digit(10) {
-                    what_we_found = item.1.to_digit(10);
-                };
+                // if let x =  {
+                //     what_we_found = x
+                // };
 
                 for (k, v) in &prefixes {
                     if line[item.0..].starts_with(k) {
