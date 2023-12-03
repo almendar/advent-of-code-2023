@@ -1,13 +1,13 @@
+use std::fmt::Display;
 use std::{
     fs::File,
     io::{self, BufRead, BufReader},
     path::Path,
 };
-use std::fmt::Display;
 
 pub fn fold_on_each_line1<T, F>(input: &str, folder: F) -> io::Result<Vec<T>>
-    where
-        F: Fn(String) -> T,
+where
+    F: Fn(String) -> T,
 {
     let path = Path::new(input);
     let file = File::open(path)?;
@@ -22,7 +22,6 @@ pub fn load_input_map(input: &str) -> io::Result<Vec<String>> {
     Ok(reader
         .lines()
         .map(|x| x.expect("Should be able to read line"))
-
         .collect::<Vec<String>>())
 }
 
