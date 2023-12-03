@@ -1,5 +1,3 @@
-use std::error::Error;
-
 #[derive(Debug)]
 pub struct Draw {
     r: u64,
@@ -15,12 +13,9 @@ pub struct Game {
 
 impl Game {
     fn is_possible(&self, r: u64, g: u64, b: u64) -> bool {
-        for draw in &self.draws {
-            if draw.r > r || draw.g > g || draw.b > b {
-                return false;
-            }
-        }
-        return true;
+        self.draws
+            .iter()
+            .all(|ref draw| draw.r <= r && draw.g <= g && draw.b <= b)
     }
 }
 
@@ -79,9 +74,9 @@ pub fn task2(games: &Vec<Game>) -> u64 {
 
 #[cfg(test)]
 mod tests {
+    use crate::common::fold_on_each_line1;
 
     use super::*;
-    use crate::common::fold_on_each_line1;
 
     #[test]
     fn test_day2() {
