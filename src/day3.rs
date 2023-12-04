@@ -36,7 +36,7 @@ fn find_numbers(board: &Vec<String>) -> Vec<Number> {
             if indexable[row_idx].is_ascii_digit() {
                 let x1 = row_idx;
                 row_idx += 1;
-                while (row_idx < line.len() && indexable[row_idx].is_ascii_digit()) {
+                while row_idx < line.len() && indexable[row_idx].is_ascii_digit() {
                     row_idx += 1
                 }
                 let x2 = row_idx - 1;
@@ -102,7 +102,7 @@ fn part2(input: &str) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::day3::{part1, part2};
+    use super::*;
 
     #[test]
     fn run_day3() {
