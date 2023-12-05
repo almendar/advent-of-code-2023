@@ -1,8 +1,5 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-    path::Path,
-};
+use std::{fs, fs::File, io::{self, BufRead, BufReader}, path::Path};
+use std::str::FromStr;
 
 pub fn fold_on_each_line1<T, F>(input: &str, folder: F) -> io::Result<Vec<T>>
 where
@@ -22,6 +19,17 @@ pub fn load_input_map(input: &str) -> io::Result<Vec<String>> {
         .lines()
         .map(|x| x.expect("Should be able to read line"))
         .collect::<Vec<String>>())
+}
+
+pub fn load_input_as_string(input: &str) -> io::Result<String> {
+    fs::read_to_string(input)
+}
+
+pub(crate) fn parse_ints_separated_by_space<T>(input: &str) -> Result<Vec<T>, <T as FromStr>::Err>
+    where
+        T: FromStr,
+{
+    input.trim().split_whitespace().map(|s| s.parse::<T>()).collect()
 }
 
 pub fn pretty_print(map: &Vec<String>) {
