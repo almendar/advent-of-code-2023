@@ -48,7 +48,7 @@ fn find_numbers(board: &Vec<String>) -> Vec<Number> {
     acc
 }
 
-fn part1(input: &str) -> u64 {
+pub fn part1(input: &str) -> u64 {
     let board = load_input_map(input).expect("This should load");
     let max_y = board.len() - 1;
     let max_x = board[0].len() - 1;
@@ -71,7 +71,7 @@ fn part1(input: &str) -> u64 {
         .sum()
 }
 
-fn part2(input: &str) -> u64 {
+pub fn part2(input: &str) -> u64 {
     let board = load_input_map(input).expect("This should load");
     let max_y = board.len() - 1;
     let max_x = board[0].len() - 1;

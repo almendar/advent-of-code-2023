@@ -1,5 +1,10 @@
-use std::{fs, fs::File, io::{self, BufRead, BufReader}, path::Path};
 use std::str::FromStr;
+use std::{
+    fs,
+    fs::File,
+    io::{self, BufRead, BufReader},
+    path::Path,
+};
 
 pub fn fold_on_each_line1<T, F>(input: &str, folder: F) -> io::Result<Vec<T>>
 where
@@ -26,13 +31,17 @@ pub fn load_input_as_string(input: &str) -> io::Result<String> {
 }
 
 pub(crate) fn parse_ints_separated_by_space<T>(input: &str) -> Result<Vec<T>, <T as FromStr>::Err>
-    where
-        T: FromStr,
+where
+    T: FromStr,
 {
-    input.trim().split_whitespace().map(|s| s.parse::<T>()).collect()
+    input
+        .trim()
+        .split_whitespace()
+        .map(|s| s.parse::<T>())
+        .collect()
 }
 
-pub fn pretty_print(map: &Vec<String>) {
+pub fn _pretty_print(map: &Vec<String>) {
     for row in map {
         for ch in row.chars() {
             print!("{ } ", ch)

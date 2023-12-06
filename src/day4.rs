@@ -43,7 +43,7 @@ fn folder(line: String) -> ScratchCard {
     }
 }
 
-fn part1(input: &str) -> u64 {
+pub fn part1(input: &str) -> u64 {
     let cards = fold_on_each_line1(input, folder).expect("Should be able to read");
     cards
         .into_iter()
@@ -54,7 +54,7 @@ fn part1(input: &str) -> u64 {
         .sum()
 }
 
-fn part2(input: &str) -> u64 {
+pub fn part2(input: &str) -> u64 {
     let cards = fold_on_each_line1(input, folder).expect("Should be able to read");
     let mut p = vec![1; cards.len()];
     for (index, card) in cards.into_iter().enumerate() {

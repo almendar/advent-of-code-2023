@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-use std::ops::Range;
-use std::str::FromStr;
 use crate::common::{load_input_as_string, parse_ints_separated_by_space};
+use std::ops::Range;
 
 #[derive(Debug)]
 struct MapRange {
@@ -21,7 +19,6 @@ impl MapRange {
                 Some(corresponding_value)
             } else {
                 panic!("Should not happen");
-                None
             }
         } else {
             None
@@ -36,16 +33,18 @@ fn load(input: &str) -> (Vec<i64>, Vec<Vec<MapRange>>) {
         .map(|x| x.to_owned())
         .collect::<Vec<String>>();
 
-    let seeds = match parts[0]
-        .split(": ").last() {
+    let seeds = match parts[0].split(": ").last() {
         Some(x) => parse_ints_separated_by_space::<i64>(x).expect("seeds parse error"),
-        None => panic!("wrong")
+        None => panic!("wrong"),
     };
 
-    let maps: Vec<Vec<MapRange>> = parts.iter().skip(1)
+    let maps: Vec<Vec<MapRange>> = parts
+        .iter()
+        .skip(1)
         .flat_map(|map| map.split("map:\n").skip(1))
-        .map(|all_ranges|
-            all_ranges.split('\n')
+        .map(|all_ranges| {
+            all_ranges
+                .split('\n')
                 .filter(|single_range| !single_range.is_empty())
                 .map(|single_range| {
                     let k = parse_ints_separated_by_space::<i64>(single_range)
@@ -53,22 +52,26 @@ fn load(input: &str) -> (Vec<i64>, Vec<Vec<MapRange>>) {
                     if k.len() != 3 {
                         panic!("Wrong parsing of MapRange")
                     }
-                    MapRange { dest: k[0], src: k[1], len: k[2] }
+                    MapRange {
+                        dest: k[0],
+                        src: k[1],
+                        len: k[2],
+                    }
                 })
-                .collect::<Vec<MapRange>>()
-        )
+                .collect()
+        })
         .collect();
 
     (seeds, maps)
 }
 
-fn part1(input: &str) -> i64 {
+pub fn part1(input: &str) -> i64 {
     let (seeds, maps) = load(input);
     let mut min_loc = i64::MAX;
     for seed1 in seeds {
         let mut transformed_to = seed1;
-        for (ft, ranges) in maps.iter().enumerate() {
-            for (rx, range) in ranges.iter().enumerate() {
+        for ranges in maps.iter() {
+            for range in ranges.iter() {
                 match range.map_to_next(transformed_to) {
                     Some(x) => {
                         // println!("going from {} to {} with range {:?}", transformed_to, x, range);
@@ -84,11 +87,9 @@ fn part1(input: &str) -> i64 {
     min_loc
 }
 
-
 fn get_output_ranges(map: &Vec<MapRange>, input: &Range<i64>) -> Vec<Range<i64>> {
     let mut output_ranges = Vec::new();
     let mut mapped_input_ranges = Vec::new();
-
 
     for map_range in map {
         let source_range = map_range.src..map_range.src + map_range.len;
@@ -102,7 +103,7 @@ fn get_output_ranges(map: &Vec<MapRange>, input: &Range<i64>) -> Vec<Range<i64>>
         }
     }
 
-    let mut cuts: Vec<i64> = Vec::new();
+    let mut cuts = Vec::new();
     cuts.push(input.start);
     for range in &mapped_input_ranges {
         cuts.push(range.start);
@@ -127,16 +128,20 @@ fn get_output_ranges(map: &Vec<MapRange>, input: &Range<i64>) -> Vec<Range<i64>>
     output_ranges
 }
 
-fn part2(input: &str) -> i64 {
+pub fn part2(input: &str) -> i64 {
     let (seeds_unpacked, maps) = load(input);
-    let seeds = seeds_unpacked.chunks(2).map(|chunk| chunk[0]..chunk[0] + chunk[1])
+    let seeds = seeds_unpacked
+        .chunks(2)
+        .map(|chunk| chunk[0]..chunk[0] + chunk[1])
         .collect::<Vec<_>>();
 
     seeds
         .iter()
         .flat_map(|seed_range| {
             maps.iter().fold(vec![seed_range.clone()], |acc, map| {
-                acc.iter().flat_map(|range| get_output_ranges(map, range)).collect()
+                acc.iter()
+                    .flat_map(|range| get_output_ranges(map, range))
+                    .collect()
             })
         })
         .min_by_key(|range| range.start)
