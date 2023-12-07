@@ -36,7 +36,7 @@ pub fn part1(input: &str) -> i64 {
                 let (time, distance) = race;
                 (0..time + 1).filter(|t| (*time - t) * t > *distance)
             }
-                .count() as i64
+            .count() as i64
         })
         .product();
 
