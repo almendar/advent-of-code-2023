@@ -36,7 +36,7 @@ pub fn part1(input: &str) -> i64 {
                 let (time, distance) = race;
                 (0..time + 1).filter(|t| (*time - t) * t > *distance)
             }
-            .count() as i64
+                .count() as i64
         })
         .product();
 
@@ -44,13 +44,13 @@ pub fn part1(input: &str) -> i64 {
 }
 
 pub fn part2(input: &str) -> i64 {
-    let races_concat = load_races(input)
+    let races_pairs = load_races(input)
         .iter()
         .fold(("".to_owned(), "".to_owned()), |acc, (t, d)| {
             (format!("{}{}", acc.0, t), format!("{}{}", acc.1, d))
         });
-    let time: i64 = races_concat.0.parse().unwrap();
-    let distance: i64 = races_concat.1.parse().unwrap();
+    let time: i64 = races_pairs.0.parse().unwrap();
+    let distance: i64 = races_pairs.1.parse().unwrap();
     (0..time + 1)
         .filter(|t| (time - t) * t > distance)
         .count()
