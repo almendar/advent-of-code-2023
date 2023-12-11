@@ -49,3 +49,9 @@ pub fn _pretty_print(map: &Vec<String>) {
         println!()
     }
 }
+
+#[derive(Debug, Clone, Copy)]
+pub struct Position {
+    pub x: i64,
+    pub y: i64,
+}
